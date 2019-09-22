@@ -5,12 +5,11 @@ import random
 import traceflow
 
 
-
 class packet_encode:
     def __init__(self, **kwargs):
         self.__dict__.update(kwargs)
         # TODO: Instead of passing all args in via kwargs, should actually explicitly set each attribute
-        logging.debug('Init for packet_encode')
+        logging.debug("Init for packet_encode")
         if "ttl" not in kwargs.keys():
             print("ttl MUST be set")
             exit(1)
@@ -26,7 +25,9 @@ class packet_encode:
 
             # Values we need to set now should be here
             self.ip_saddr = socket.inet_aton(
-                socket.gethostbyname(traceflow.socket_handler.get_egress_ip(self.ip_daddr))
+                socket.gethostbyname(
+                    traceflow.socket_handler.get_egress_ip(self.ip_daddr)
+                )
             )
 
             self.ip_daddr = socket.inet_aton(socket.gethostbyname(self.ip_daddr))
@@ -37,7 +38,9 @@ class packet_encode:
                 kwargs.get("ip_frag_off") if kwargs.get("ip_frag_off") else 0
             )
             # If ip_id is not set, lets generate a random value here. 16 bit field means 65536
-            self.ip_id = kwargs.get("ip_id") if kwargs.get("ip_id") else random.randint(0,65535)
+            self.ip_id = (
+                kwargs.get("ip_id") if kwargs.get("ip_id") else random.randint(0, 65535)
+            )
             self.ip_ihl = 5
             logging.debug(f"Sending with ID {self.ip_id}")
             logging.debug(f"Sending with TTL {self.ttl}")
@@ -65,7 +68,7 @@ class packet_encode:
         # ip header fields
         # Source: https://www.binarytides.com/raw-socket-programming-in-python-linux/
         # Source: http://www.campergat.com/tcp-raw-sockets-in-python/
-        logging.debug('Encoding IPv4 Packet now')
+        logging.debug("Encoding IPv4 Packet now")
         # We add these bytes together so they equate to 8 bits wide, aka a "B" for struct.pack()
         ip_ihl_ver = (self.ip_ver << 4) + self.ip_ihl
 
@@ -98,7 +101,7 @@ class packet_encode:
         # Taken inspiration from  https://github.com/houluy/UDP/blob/master/udp.py
         # Generate some data, encode to bytes array, snag the length. Ensure data is even length, otherwise we have to add padding byte
         # TODO: Encode timestamp here for future analysis
-        logging.debug('Encoding UDP Packet now')
+        logging.debug("Encoding UDP Packet now")
         self.data = "0123456789".encode()
         # UDP is a bit stupid, and takes a lower layer info as part of it's checksum. Specifically src/dst IP addr.
         # This is called the pseudo header
@@ -172,10 +175,11 @@ class packet_decode:
         """
 
         # Decode the first 20 bytes, rest will most likely be payload (We'll re-base with ip_ihl later on)
-        logging.debug('Decoding IPv4 Header')
+        logging.debug("Decoding IPv4 Header")
         ip_header = header[0:20]
         ip_ihl_ver, ip_tos, ip_tot_len, ip_id, ip_frag_off, ttl, l4_proto, ip_check, ip_saddr, ip_daddr = struct.unpack(
-            "!BBHHHBBH4s4s", ip_header)
+            "!BBHHHBBH4s4s", ip_header
+        )
         # since we cannot read nibbles easy, we need to take the first byte and take the high/low nibble out
         ip_ver = ip_ihl_ver >> 4
         ip_ihl = ip_ihl_ver & 0x0F  # 0x0F == 15
@@ -194,7 +198,7 @@ class packet_decode:
             "ip_check": ip_check,
             "ip_saddr": socket.inet_ntoa(ip_saddr),
             "ip_daddr": socket.inet_ntoa(ip_daddr),
-            "payload": header[ip_payload_offset:]
+            "payload": header[ip_payload_offset:],
         }
         return ret
 
@@ -220,8 +224,10 @@ class packet_decode:
         :return:
         """
 
-        logging.debug('Decoding UDP Header')
-        udp_src_port, udp_dst_port, len_data, checksum = struct.unpack("!4H", header[:8])
+        logging.debug("Decoding UDP Header")
+        udp_src_port, udp_dst_port, len_data, checksum = struct.unpack(
+            "!4H", header[:8]
+        )
         # UDP strikes again.
         len_data = len_data - 8
         data = header[8:]
@@ -251,7 +257,7 @@ class packet_decode:
         :return: ret, a dict object of the fields in the ICMP header
         """
 
-        logging.debug('Decoding ICMP Header')
+        logging.debug("Decoding ICMP Header")
         type, code, checksum, unused = struct.unpack("!BBHH", header[:6])
         # Payload should start after 2 machine words, which is 2 * 4 * 8
         payload = header[8:]

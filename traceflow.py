@@ -12,7 +12,7 @@ def ipid_to_ints(ipid: int) -> tuple:
     :param ipid: int which is 16 bits in size.
     :return: tuple:
     """
-    b = ipid.to_bytes(2, byteorder='big')
+    b = ipid.to_bytes(2, byteorder="big")
     return struct.unpack("!BB", b)
 
 
@@ -25,7 +25,7 @@ def ints_to_ipid(path: int, ttl: int) -> int:
     :return: int: path and ttl combined into a halfword
     """
     s = struct.pack("!H", (path << 8) + ttl)
-    return int.from_bytes(s, byteorder='big')
+    return int.from_bytes(s, byteorder="big")
 
 
 def help_text() -> str:
@@ -45,18 +45,32 @@ def get_help() -> argparse:
     parser = argparse.ArgumentParser(message)
 
     # Named Arguments
-    parser.add_argument('--paths', help='Number of paths to enumerate', default=4, type=int)
-    parser.add_argument('--ttl', help='Max TTL to reach', default=64, type=int)
-    parser.add_argument('--srcport', help='Default Source Port to use', default=33452, type=int)
-    parser.add_argument('--dstport', help='Default Destination Port to use', default=33452, type=int)
-    parser.add_argument('--wait', help='Set the time (in seconds) to wait between sending probes', default=0.1,
-                        type=int)
-    parser.add_argument('--format', help='Print the results vertically(--format=vert) or horizontally(--format=horiz)',
-                        default="vert", type=str)
-    parser.add_argument('--debug', help='Enable Debug Logging', action='store_true')
+    parser.add_argument(
+        "--paths", help="Number of paths to enumerate", default=4, type=int
+    )
+    parser.add_argument("--ttl", help="Max TTL to reach", default=64, type=int)
+    parser.add_argument(
+        "--srcport", help="Default Source Port to use", default=33452, type=int
+    )
+    parser.add_argument(
+        "--dstport", help="Default Destination Port to use", default=33452, type=int
+    )
+    parser.add_argument(
+        "--wait",
+        help="Set the time (in seconds) to wait between sending probes",
+        default=0.1,
+        type=int,
+    )
+    parser.add_argument(
+        "--format",
+        help="Print the results vertically(--format=vert) or horizontally(--format=horiz)",
+        default="vert",
+        type=str,
+    )
+    parser.add_argument("--debug", help="Enable Debug Logging", action="store_true")
 
     # Positional Arguments
-    parser.add_argument('destination', action="store", type=str)
+    parser.add_argument("destination", action="store", type=str)
 
     args = parser.parse_args()
     return args
@@ -93,8 +107,15 @@ def main():
             # Here we will combine the path we're after with the TTL, and use this to track the returning ICMP payload
             ip_id = ints_to_ipid(path, ttl)
             # TODO: Hide this behind a class
-            packet = {'ip_ver': 4, 'ip_daddr': daddr, 'udp_src_port': port, 'udp_dst_port': DST_PORT, 'ttl': ttl,
-                      'l4_proto': 17, 'ip_id': ip_id}
+            packet = {
+                "ip_ver": 4,
+                "ip_daddr": daddr,
+                "udp_src_port": port,
+                "udp_dst_port": DST_PORT,
+                "ttl": ttl,
+                "l4_proto": 17,
+                "ip_id": ip_id,
+            }
             # Create our packet here.
             i = traceflow.packet_encode(**packet)
             # TODO: Maybe refactor to hide these behind a single function, to be v4/v6 agnostic
@@ -106,7 +127,7 @@ def main():
             time.sleep(args.wait)
             # Since we are not running a sequential trace, we should check in to see if we've gotten a reply from the destination yet
             packets = listener.get_packets_by_pathid(path)
-            end = [i for i in packets if i['ip_saddr'] == daddr]
+            end = [i for i in packets if i["ip_saddr"] == daddr]
             if len(end) > 0:
                 logging.debug(f"Breaking trace to {daddr} at TTL {ttl}")
                 break
@@ -116,13 +137,13 @@ def main():
     traces = dict()
 
     for i in rx_icmp:
-        icmp_packet = traceflow.packet_decode.decode_icmp(rx_icmp[i]['payload'])
-        ipv4_packet = traceflow.packet_decode.decode_ipv4_header(icmp_packet['payload'])
-        (path, ttl) = ipid_to_ints(ipv4_packet['ip_id'])
+        icmp_packet = traceflow.packet_decode.decode_icmp(rx_icmp[i]["payload"])
+        ipv4_packet = traceflow.packet_decode.decode_ipv4_header(icmp_packet["payload"])
+        (path, ttl) = ipid_to_ints(ipv4_packet["ip_id"])
         if path not in traces.keys():
             traces[path] = dict()
         if ttl not in traces[path].keys():
-            traces[path][ttl] = rx_icmp[i]['ip_saddr']
+            traces[path][ttl] = rx_icmp[i]["ip_saddr"]
         logging.debug("Run: %s TTL: %s" % (path, ttl))
 
     # Here we will fill in missing probes with a *
@@ -156,7 +177,7 @@ def main():
     if args.format.lower() == "horiz":
         # print vertical results
         traceflow.printer.print_horizontal(traces)
-    #if args.format.lower() == "viz":
+    # if args.format.lower() == "viz":
     #    traceflow.printer.start_viz(traces)
     exit(0)
 

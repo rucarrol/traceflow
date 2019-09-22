@@ -3,9 +3,10 @@ import traceflow
 import struct
 import socket
 
+
 class TestPacketDecode(unittest.TestCase):
     global packet
-    packet =  b'E\xc0<\x00LT\x00\x009\x01q\xd0\x01\x01\x01\x01\xc0\xa8\x00\x1f\x03\x03\xbf\xf7\x00\x00\x00\x00E\x004\x00\xe8\xca\x00\x00\x01\x11\x0e&\xc0\xa8\x00\x1f\x01\x01\x01\x01\xe8\xb5\x82\xaf\x00 \xd1\x7f\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
+    packet = b"E\xc0<\x00LT\x00\x009\x01q\xd0\x01\x01\x01\x01\xc0\xa8\x00\x1f\x03\x03\xbf\xf7\x00\x00\x00\x00E\x004\x00\xe8\xca\x00\x00\x01\x11\x0e&\xc0\xa8\x00\x1f\x01\x01\x01\x01\xe8\xb5\x82\xaf\x00 \xd1\x7f\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
 
     def test_decode_ipv4(self):
         i = traceflow.packet_decode.decode_ipv4_header(packet)
@@ -13,47 +14,47 @@ class TestPacketDecode(unittest.TestCase):
 
     def test_decode_ipv4_ttl(self):
         i = traceflow.packet_decode.decode_ipv4_header(packet)
-        self.assertEqual(i['ttl'], 57)
+        self.assertEqual(i["ttl"], 57)
 
     def test_decode_ipv4_saddr(self):
         i = traceflow.packet_decode.decode_ipv4_header(packet)
-        self.assertEqual(i['ip_saddr'], "1.1.1.1")
+        self.assertEqual(i["ip_saddr"], "1.1.1.1")
 
     def test_decode_ipv4_daddr(self):
         i = traceflow.packet_decode.decode_ipv4_header(packet)
-        self.assertEqual(i['ip_daddr'], "192.168.0.31")
+        self.assertEqual(i["ip_daddr"], "192.168.0.31")
 
     def test_decode_ipv4_ihl(self):
         i = traceflow.packet_decode.decode_ipv4_header(packet)
-        self.assertEqual(i['ip_ihl'], 5)
+        self.assertEqual(i["ip_ihl"], 5)
 
     def test_decode_ipv4_ver(self):
         i = traceflow.packet_decode.decode_ipv4_header(packet)
-        self.assertEqual(i['ip_ver'], 4)
+        self.assertEqual(i["ip_ver"], 4)
 
     def test_decode_ipv4_daddr(self):
         i = traceflow.packet_decode.decode_ipv4_header(packet)
-        self.assertEqual(i['ip_tos'], 192)
+        self.assertEqual(i["ip_tos"], 192)
 
     def test_decode_ipv4_tot_len(self):
         i = traceflow.packet_decode.decode_ipv4_header(packet)
-        self.assertEqual(i['ip_tot_len'], 15360)
+        self.assertEqual(i["ip_tot_len"], 15360)
 
     def test_decode_ipv4_ipid(self):
         i = traceflow.packet_decode.decode_ipv4_header(packet)
-        self.assertEqual(i['ip_id'], 19540)
+        self.assertEqual(i["ip_id"], 19540)
 
     def test_decode_ipv4_frag_off(self):
         i = traceflow.packet_decode.decode_ipv4_header(packet)
-        self.assertEqual(i['ip_frag_off'], 0)
+        self.assertEqual(i["ip_frag_off"], 0)
 
     def test_decode_ipv4_l4_proto(self):
         i = traceflow.packet_decode.decode_ipv4_header(packet)
-        self.assertEqual(i['l4_proto'], 1)
+        self.assertEqual(i["l4_proto"], 1)
 
     def test_decode_ipv4_checksum(self):
         i = traceflow.packet_decode.decode_ipv4_header(packet)
-        self.assertEqual(i['ip_check'], 29136)
+        self.assertEqual(i["ip_check"], 29136)
 
 
 class TestPacketEncode(unittest.TestCase):
