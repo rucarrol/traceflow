@@ -1,4 +1,6 @@
 language: python 
+os: linux
+dist: bionic
 python:
   - "3.6"
   - "3.7"
