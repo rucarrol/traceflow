@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import traceflow
 import time
 import struct
