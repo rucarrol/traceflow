@@ -1,3 +1,7 @@
+# traceflow
+
+[![Build Status](https://travis-ci.org/rucarrol/traceflow.png)](https://travis-ci.org/rucarrol/traceflow)
+
 
 ## Intro
 
