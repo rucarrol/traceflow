@@ -47,9 +47,31 @@ More detailed help available in  `--help`.
 
 I wanted to learn more about raw sockets, traceroute and also wanted to try vary traceroute to be more flow/path aware, rather than hop aware. 
 
+## Protocol used
+
+The classical traceroutes (Dublin, Paris) attempt to enumerate the hops along a path by using many different entropy sources in the IP and UDP/TCP headers. 
+
+These days, most networks are using 3-tuple hashing in their forwarding decisions for load balancing: src/dst IP, proto, src/dst Port. 
+
+`traceflow` does the exact opposite here. We only vary two fields on each run - IP.ID, TTL. Then for subsequent runs, we only vary the UDP source port. Thus we can attempt to reliably test which flows would 
+
+To detect return packets, we use the IP.ID in the IP header to store state - the path ID we're looking up, and the TTL of the egress packet. This allows us to implement a much faster multithreaded approach, as well as detect uneven hashing. It does bring a downside of being a bit more chatty than regular traceroute.
+
+This idea came to me in Stockholm, so I would like to call it Stockholm traceroute. 
+
+
+## Features
+
+- Pure python3, only 1 single external dependency (argparse)
+- Multi-threaded approach, we no longer need to wait for a return packet for each probe 
+- Will identify and print unique paths in three different formats (Including browser based)
+- Detects uneven path lengths 
+- Has a packet encoding and decoding library
+
+
+
 ## TODO
 
-- Better output formatting
 - Duplicate path detection
 - IPv6 Support
 - MPLS Support (Sending and decoding)
@@ -63,7 +85,6 @@ I wanted to learn more about raw sockets, traceroute and also wanted to try vary
 
 
 ## Bugs
-
 
 - Currently not very good at handling unequal length paths
 - Darwin/OSX not functional yet
