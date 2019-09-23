@@ -20,7 +20,7 @@ The goal is to develop this utility to a point where it can be useful in product
 
 ## Usage
 
-Usage should be designed to be as straight forward as possible. 
+Usage should be designed to be as straight forward as possible. There are currently 3 output formats supported - Vertical Output (`--format=vert`), Horizontal output(`--format=horiz`) and experimental Vis.js/Browser based output(`--format=viz`). 
 
 ```
 $ python3 traceflow.py www.telia.se
