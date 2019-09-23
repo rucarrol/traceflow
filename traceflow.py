@@ -178,8 +178,9 @@ def main():
     if args.format.lower() == "horiz":
         # print vertical results
         traceflow.printer.print_horizontal(traces)
-    # if args.format.lower() == "viz":
-    #    traceflow.printer.start_viz(traces)
+    if args.format.lower() == "viz":
+        # Experimental vis.js / browser based visualisation
+        traceflow.printer.start_viz(traces)
     exit(0)
 
 
