@@ -4,15 +4,15 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="run",
+    name="traceflow.py",
     version="0.1",
-    scripts=["run"],
+    scripts=["traceflow.py"],
     author="Ruairi Carroll",
     author_email="ruairi.carroll@gmail.com",
     description="Python version of traceroute which is path aware",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/",
+    url="bernese",
     packages=setuptools.find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
