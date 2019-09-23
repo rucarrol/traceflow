@@ -36,6 +36,10 @@ Path ID 3         | 192.168.0.1       | 84.116.236.63     | 84.116.239.133    | 
 Path ID 4         | 192.168.0.1       | 84.116.236.63     | 84.116.239.133    | 62.115.172.136    | 62.115.120.100    | 80.91.249.11      | 213.155.130.101   | 62.115.142.215    | 62.115.123.163    | 81.228.91.142     | 81.228.84.173     | 81.228.94.41      | 90.228.166.164    | 
 ```
 
+An example of vis.js outputs is as follows:
+
+![vis.js](https://github.com/rucarrol/traceflow/raw/master/docs/traceflow_vis.png)
+
 More detailed help available in  `--help`.
 
 
