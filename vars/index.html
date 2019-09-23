@@ -1,0 +1,57 @@
+<!doctype html>
+<html>
+<head>
+  <title>Network | Basic usage</title>
+
+  <script type="text/javascript" src="https://visjs.github.io/vis-network/dist/vis-network.min.js"></script>
+  <link href="https://visjs.github.io/vis-network/dist/vis-network.min.css" rel="stylesheet" type="text/css" />
+
+  <style type="text/css">
+    #mynetwork {
+      width: 1600px;
+      height: 1200px;
+      border: 1px solid lightgray;
+    }
+  </style>
+</head>
+<body>
+
+<div id="mynetwork"></div>
+
+<script type="text/javascript" src="nodes.json"></script>
+<script type="text/javascript">
+
+//url = "http://192.168.0.178:8081/nodes.json"
+//data = obj = await (await fetch(url)).json();
+
+var parsed = JSON.parse(data);
+    // create a network
+    var container = document.getElementById("mynetwork");
+
+    // provide the data in the vis format
+    var data = {
+      nodes: parsed.nodes,
+      edges: parsed.links
+    };
+    var options = {
+                layout: {
+                    randomSeed: 6,
+                    hierarchical: {
+                        direction: "LR",
+                        sortMethod: "directed",
+                        levelSeparation: 200,
+                        nodeSpacing: 40,
+
+                    }
+                },
+                interaction: {
+                    hover: true
+                }
+   };
+
+    // initialize your network!
+    var network = new vis.Network(container, data, options);
+</script>
+
+
+</html>
