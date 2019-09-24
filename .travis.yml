@@ -6,4 +6,4 @@ python:
 install:
   - pip install -r requirements.txt
 # command to run tests
-script: sudo /home/travis/virtualenv/python3.7.1/bin/python traceflow/__main__.py 1.1.1.1 
+script: pip install traceflow && sudo traceflow 1.1.1.1
