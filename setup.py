@@ -5,16 +5,15 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="traceflow",
-    version="0.1",
-    scripts=["traceflow.py"],
+    version="0.2",
     author="Ruairi Carroll",
     author_email="ruairi.carroll@gmail.com",
     description="Python version of traceroute which is path aware",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/rucarrol/traceflow",
-    python_requires='>=3.6',
-    packages=setuptools.find_packages(),
+    python_requires=">=3.6",
+    packages=["traceflow"],
     classifiers=[
         "Programming Language :: Python :: 3",
         "Development Status :: 4 - Beta",
@@ -22,11 +21,5 @@ setuptools.setup(
         "License :: OSI Approved :: BSD License",
         "Operating System :: OS Independent",
     ],
-    entry_points={
-        "console_scripts": [
-            "traceflow=traceflow:main",
-        ]
-    },
+    entry_points={"console_scripts": ["traceflow=traceflow.__main__:main"]},
 )
-
-
