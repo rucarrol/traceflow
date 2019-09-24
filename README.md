@@ -18,6 +18,22 @@ The goal is to develop this utility to a point where it can be useful in product
 - IP Topology discovery and visualisation
 
 
+## Installation
+
+`traceflow` can be installed via pip:
+
+```
+pip install traceflow
+```
+
+Alternatively, you can build from source and install manually:
+
+```
+python3 setup.py bdist_wheel
+pip install ./dist/traceflow*any.whl
+```
+
+
 ## Usage
 
 Usage should be designed to be as straight forward as possible. There are currently 3 output formats supported - Vertical Output (`--format=vert`), Horizontal output(`--format=horiz`) and experimental Vis.js/Browser based output(`--format=viz`). 
