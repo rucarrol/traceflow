@@ -17,7 +17,9 @@ setuptools.setup(
     packages=setuptools.find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
-        'BSD 3-Clause "New" or "Revised" License',
+        "Development Status :: 4 - Beta",
+        "Environment :: Console",
+        "License :: OSI Approved :: BSD License",
         "Operating System :: OS Independent",
     ],
     entry_points={
@@ -26,3 +28,5 @@ setuptools.setup(
         ]
     },
 )
+
+
