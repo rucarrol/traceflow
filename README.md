@@ -53,7 +53,7 @@ The classical traceroutes (Dublin, Paris) attempt to enumerate the hops along a 
 
 These days, most networks are using 3-tuple hashing in their forwarding decisions for load balancing: src/dst IP, proto, src/dst Port. 
 
-`traceflow` does the exact opposite here. We only vary two fields on each run - IP.ID, TTL. Then for subsequent runs, we only vary the UDP source port. Thus we can attempt to reliably test which flows would 
+`traceflow` does the exact opposite here. We only vary two fields on each run - IP.ID, TTL. Then for subsequent runs, we only vary the UDP source port. Thus we can attempt to reliably test which flows would normally be combined into one output from traceroute, Paris traceroute and Dublin traceroute.
 
 To detect return packets, we use the IP.ID in the IP header to store state - the path ID we're looking up, and the TTL of the egress packet. This allows us to implement a much faster multithreaded approach, as well as detect uneven hashing. It does bring a downside of being a bit more chatty than regular traceroute.
 
