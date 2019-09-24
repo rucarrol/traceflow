@@ -18,6 +18,22 @@ The goal is to develop this utility to a point where it can be useful in product
 - IP Topology discovery and visualisation
 
 
+## Installation
+
+`traceflow` can be installed via pip:
+
+```
+pip install traceflow
+```
+
+Alternatively, you can build from source and install manually:
+
+```
+python3 setup.py bdist_wheel
+pip install ./dist/traceflow*any.whl
+```
+
+
 ## Usage
 
 Usage should be designed to be as straight forward as possible. There are currently 3 output formats supported - Vertical Output (`--format=vert`), Horizontal output(`--format=horiz`) and experimental Vis.js/Browser based output(`--format=viz`). 
@@ -53,7 +69,7 @@ The classical traceroutes (Dublin, Paris) attempt to enumerate the hops along a 
 
 These days, most networks are using 3-tuple hashing in their forwarding decisions for load balancing: src/dst IP, proto, src/dst Port. 
 
-`traceflow` does the exact opposite here. We only vary two fields on each run - IP.ID, TTL. Then for subsequent runs, we only vary the UDP source port. Thus we can attempt to reliably test which flows would 
+`traceflow` does the exact opposite here. We only vary two fields on each run - IP.ID, TTL. Then for subsequent runs, we only vary the UDP source port. Thus we can attempt to reliably test which flows would normally be combined into one output from traceroute, Paris traceroute and Dublin traceroute.
 
 To detect return packets, we use the IP.ID in the IP header to store state - the path ID we're looking up, and the TTL of the egress packet. This allows us to implement a much faster multithreaded approach, as well as detect uneven hashing. It does bring a downside of being a bit more chatty than regular traceroute.
 
