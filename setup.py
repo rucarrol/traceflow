@@ -13,6 +13,7 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/rucarrol/traceflow",
+    python_requires='>=3.6',
     packages=setuptools.find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
