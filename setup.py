@@ -4,7 +4,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="traceflow.py",
+    name="traceflow",
     version="0.1",
     scripts=["traceflow.py"],
     author="Ruairi Carroll",
@@ -12,11 +12,16 @@ setuptools.setup(
     description="Python version of traceroute which is path aware",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="bernese",
+    url="https://github.com/rucarrol/traceflow",
     packages=setuptools.find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
         'BSD 3-Clause "New" or "Revised" License',
         "Operating System :: OS Independent",
     ],
+    entry_points={
+        "console_scripts": [
+            "traceflow=flow:main",
+        ]
+    },
 )
