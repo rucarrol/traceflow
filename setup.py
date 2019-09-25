@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="traceflow",
-    version="0.2",
+    version="0.3",
     author="Ruairi Carroll",
     author_email="ruairi.carroll@gmail.com",
     description="Python version of traceroute which is path aware",

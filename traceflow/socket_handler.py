@@ -20,17 +20,15 @@ class socket_handler:
         os_release = platform.system()
         if os_release == "Darwin":
             # Boned. TODO: Work on fixing this.
-            logging.debug(
-                "Detected Mac OS - Cannot support writing of raw IP packets, exiting"
-            )
+            print("Detected Mac OS - Cannot support writing of raw IP packets, exiting")
             exit(1)
         if os_release.endswith("BSD"):
-            # BSD - Need to explicit set IP_HDRINCL. Probably.
-            # See https://wiki.freebsd.org/SOCK_RAW
+            # BSD - Need to explicit set IP_HDRINCL.
+            # BSD - Need to explicitly calculate IP total length
             self.raw_sock.setsockopt(socket.IPPROTO_IP, socket.IP_HDRINCL, 1)
             logging.debug("Detected a BSD")
         if os_release == "Linux":
-            # Linux - No need to set IP_HDRINCL, but going to anyway!
+            # Linux - No need to set IP_HDRINCL,as setting SOCK_RAW auto sets this. However should be explicit in settings.
             self.raw_sock.setsockopt(socket.IPPROTO_IP, socket.IP_HDRINCL, 1)
             logging.debug("Detected Linux")
         if os_release == "Windows":

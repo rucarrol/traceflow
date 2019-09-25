@@ -20,7 +20,9 @@ class packet_encode:
         if self.ip_ver == 4:
             # Do inet4 packet handling here
             ## Values which the kernel will set are here
-            self.ip_tot_len = 0  # Kernel will set this value, thankfully
+            # TODO: BSD wont auto-set total length for us. We need a better way of doing this.
+            # Short term work around, set to min. ip header length (20) and min. UDP header length (8) + payload (10)
+            self.ip_tot_len = 38  # Kernel will set this value on linux if 0.
             self.ip_check = 0  # Kernel should set this value
 
             # Values we need to set now should be here
@@ -41,9 +43,11 @@ class packet_encode:
             self.ip_id = (
                 kwargs.get("ip_id") if kwargs.get("ip_id") else random.randint(0, 65535)
             )
+            ## TODO: Min header length is 20 bits, which is 5 * 8 (And an int is 8 bits wide). Should actually re-write this dynamically to set correct header size
             self.ip_ihl = 5
-            logging.debug(f"Sending with ID {self.ip_id}")
-            logging.debug(f"Sending with TTL {self.ttl}")
+            logging.debug(
+                f"Sending with ID {self.ip_id}, TTL {self.ttl} to {self.ip_daddr}"
+            )
 
         if self.ip_ver == 6:
             # TODO: All of the IPv6 things
@@ -86,6 +90,7 @@ class packet_encode:
             self.ip_saddr,
             self.ip_daddr,
         )
+        self.ip_packet = ip_header
         return ip_header
 
     def encode_ipv4_udp_packet(self: object) -> bytes:
