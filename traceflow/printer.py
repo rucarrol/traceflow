@@ -53,6 +53,7 @@ class printer:
     @staticmethod
     def start_viz(traces) -> None:
         ## TODO: Break apart into different classes?
+        # TODO: Need to re-home the http server to serve out of a tmp directory, or serve from
         import http.server
 
         port = 8081
