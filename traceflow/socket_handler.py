@@ -71,12 +71,15 @@ class socket_listener:
         # We're only interested in ICMP, so happy to have this hard coded.
         try:
             self.icmp_listener = socket.socket(
-                socket.AF_INET, socket.SOCK_RAW, socket.getprotobyname("icmp")
+                    socket.AF_INET, socket.SOCK_RAW, socket.getprotobyname("icmp")
             )
         except PermissionError as e:
             print(e)
             print("Please run as root!")
             exit(1)
+        # TODO: Test Timestamps correctly
+        SO_TIMESTAMPNS = 35
+        self.icmp_listener.setsockopt(socket.SOL_SOCKET, SO_TIMESTAMPNS, 1)
         self.ip_daddr = ip_daddr
         self.mutex = threading.Lock()
         logging.debug("Starting")

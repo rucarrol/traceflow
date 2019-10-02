@@ -30,6 +30,17 @@ def ints_to_ipid(path: int, ttl: int) -> int:
     return int.from_bytes(s, byteorder="big")
 
 
+def remove_duplicates(traces, daddr):
+    for path in traces.keys():
+        # Remove any duplicate answers from daddr
+        dup_keys = [i for i in traces[path] if traces[path][i] == daddr]
+        while len(dup_keys) > 1:
+            print("dup keys: %s" % dup_keys)
+            traces[path].pop(max(dup_keys))
+            dup_keys = [i for i in traces[path] if traces[path][i] == daddr]
+    return traces
+
+
 def help_text() -> str:
     message: str = """
     TraceFlow is a utility which attempts to enumerate the number of paths between this host and a given destination.
@@ -83,7 +94,16 @@ def main():
     args = get_help()
 
     # CLI arguments set here.
-    daddr = socket.gethostbyname(args.destination)
+    try:
+        daddr = socket.gethostbyname(args.destination)
+    except socket.gaierror as e:
+        if "Name or service not known" in str(e):
+            print(f"Error, could not resolve {args.destination}, exiting")
+            exit(1)
+        else:
+            print(f"General error resolving {args.destination}")
+            print("exiting")
+            exit(1)
     print(f"Resolved {args.destination} to {daddr}")
     TOT_RUNS = args.paths
     DST_PORT = args.dstport
@@ -151,14 +171,9 @@ def main():
     # Here we will fill in missing probes with a *
     # We should also trim any duplicate replies from daddr
     # and also fill in an x to pad up unequal path lengths
+    traces = remove_duplicates(traces, daddr)
     path_max = max([max(traces[i].keys()) for i in traces.keys()])
     for path in traces.keys():
-        # Remove any duplicate answers from daddr
-        dup_keys = [i for i in traces[path] if traces[path][i] == daddr]
-        while len(dup_keys) > 1:
-            logging.debug("dup keys: %s" % dup_keys)
-            traces[path].pop(max(dup_keys))
-            dup_keys = [i for i in traces[path] if traces[path][i] == daddr]
         # Now we fill in * for any missing hops
         last_ttl = sorted(traces[path])[-1]
         for ttl in list(range(1, last_ttl + 1)):

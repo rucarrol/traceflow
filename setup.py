@@ -12,7 +12,7 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/rucarrol/traceflow",
-    python_requires=">=3.6",
+    python_requires=">=3.5",
     packages=["traceflow"],
     classifiers=[
         "Programming Language :: Python :: 3",
@@ -21,5 +21,8 @@ setuptools.setup(
         "License :: OSI Approved :: BSD License",
         "Operating System :: OS Independent",
     ],
-    entry_points={"console_scripts": ["traceflow=traceflow.__main__:main"]},
+    package_data={
+        '': ['vars/*.html'],
+    },
+    entry_points = {"console_scripts": ["traceflow=traceflow.__main__:main"]},
 )
