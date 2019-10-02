@@ -6,4 +6,4 @@ python:
 install:
   - pip install -r requirements.txt
 # command to run tests
-script: pip install traceflow && sudo traceflow 1.1.1.1
+script: python setup.py bdist_wheel &&  pip install ./dist/traceflow*any.whl && sudo -E $(which traceflow) 1.1.1.1
