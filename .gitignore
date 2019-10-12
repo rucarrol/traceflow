@@ -4,4 +4,4 @@ __pycache__/
 /build/
 /dist/
 /traceflow.egg-info/
-/vars/*
+/vars/nodes.json
