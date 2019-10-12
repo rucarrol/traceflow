@@ -51,13 +51,12 @@ class printer:
         return None
 
     @staticmethod
-    def start_viz(traces) -> None:
+    def start_viz(traces, bind_ip) -> None:
         ## TODO: Break apart into different classes?
         # TODO: Need to re-home the http server to serve out of a tmp directory, or serve from
         import http.server
 
         port = 8081
-        bind_ip = "127.0.0.1"
         DIRECTORY = "vars/"
 
         class Handler(http.server.SimpleHTTPRequestHandler):

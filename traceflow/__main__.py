@@ -76,8 +76,14 @@ def get_help() -> argparse:
     )
     parser.add_argument(
         "--format",
-        help="Print the results vertically(--format=vert) or horizontally(--format=horiz)",
+        help="Print the results vertically (--format=vert) or horizontally (--format=horiz), or even represented in a web browser (--format=viz)",
         default="vert",
+        type=str,
+    )
+    parser.add_argument(
+        "--bind",
+        help="IP address to bind the vis.js web server to",
+        default="127.0.0.1",
         type=str,
     )
     parser.add_argument("--debug", help="Enable Debug Logging", action="store_true")
@@ -109,6 +115,7 @@ def main():
     DST_PORT = args.dstport
     SRC_PORT = args.srcport
     MAX_TTL = args.ttl
+    BIND_IP = args.bind
 
     if args.debug:
         logger = logging.getLogger()
@@ -196,7 +203,7 @@ def main():
         traceflow.printer.print_horizontal(traces)
     if args.format.lower() == "viz":
         # Experimental vis.js / browser based visualisation
-        traceflow.printer.start_viz(traces)
+        traceflow.printer.start_viz(traces, BIND_IP)
     exit(0)
 
 
