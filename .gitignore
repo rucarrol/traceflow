@@ -1,0 +1,7 @@
+__pycache__/
+*.py[cod]
+
+/build/
+/dist/
+/traceflow.egg-info/
+/vars/nodes.json
