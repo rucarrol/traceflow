@@ -16,17 +16,15 @@ pre_script: |
 # command to run tests
 jobs:
   include:
-    - stage: installing
-      script: |
-        python setup.py bdist_wheel
-        pip install ./dist/traceflow*any.whl
     - stage: linting
-      script: black --check .
-    - stage: test
-      script: |
-        python setup.py bdist_wheel &&
-        pip install ./dist/traceflow*any.whl &&
-        sudo -E $(which traceflow) 1.1.1.1
+      script: black --check traceflow
+    - stage: systemtest
+      python:
+        - "3.6"
+        - "3.7"
+        - "3.8"
+      script: sudo -E $(which traceflow) 1.1.1.1
+      sudo: true
     - stage: docker
       script: docker build -t traceflow .
 
