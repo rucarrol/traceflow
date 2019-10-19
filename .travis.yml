@@ -5,6 +5,7 @@ python:
   - "3.6"
   - "3.7"
   - "3.8"
+
 install:
   - pip install -r requirements.txt
   - pip install -r requirements-build.txt
@@ -14,22 +15,12 @@ pre_script: |
   pip install ./dist/traceflow*any.whl
 
 # command to run tests
-jobs:
-  include:
-    - stage: linting
-      script: black --check traceflow
-    - stage: systemtest
-      python:
-        - "3.6"
-        - "3.7"
-        - "3.8"
-      script: sudo -E $(which traceflow) 1.1.1.1
-      sudo: true
-    - stage: docker
-      script: docker build -t traceflow .
-
-
-script: pytest
+script: |
+  black --check traceflow
+  black --check tests
+  pytest
+  sudo -E $(which traceflow) 1.1.1.1
+  #docker build -t traceflow .
 
 notifications:
   email: false
