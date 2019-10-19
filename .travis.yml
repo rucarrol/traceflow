@@ -15,11 +15,12 @@ pre_script: |
   pip install ./dist/traceflow*any.whl
 
 # command to run tests
-script: |
-  black --check traceflow
-  black --check tests
-  pytest
-  sudo -E $(which traceflow) 1.1.1.1
+script:
+  - black --check traceflow
+  - black --check tests
+  - pytest
+  - sudo -E $(which traceflow) 1.1.1.1
+
   #docker build -t traceflow .
 
 notifications:
