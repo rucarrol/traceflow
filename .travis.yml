@@ -2,11 +2,17 @@ language: python
 os: linux
 dist: bionic
 python:
+  - "3.6"
   - "3.7"
   - "3.8"
 install:
   - pip install -r requirements.txt
   - pip install -r requirements-build.txt
+
+pre_script: |
+  python setup.py bdist_wheel
+  pip install ./dist/traceflow*any.whl
+
 # command to run tests
 jobs:
   include:
@@ -21,7 +27,13 @@ jobs:
         python setup.py bdist_wheel &&
         pip install ./dist/traceflow*any.whl &&
         sudo -E $(which traceflow) 1.1.1.1
+    - stage: docker
+      script: docker build -t traceflow .
 
 
-script: echo "hello world" 
+script: pytest
+
+notifications:
+  email: false
+
 
