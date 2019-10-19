@@ -1,9 +1,23 @@
-language: python 
+language: python
 os: linux
 dist: bionic
 python:
   - "3.7"
+  - "3.8"
 install:
   - pip install -r requirements.txt
+  - pip install -r requirements-build.txt
 # command to run tests
-script: python setup.py bdist_wheel &&  pip install ./dist/traceflow*any.whl && sudo -E $(which traceflow) 1.1.1.1
+jobs:
+  include:
+    - stage: installing
+      script: |
+        python setup.py bdist_wheel
+        pip install ./dist/traceflow*any.whl
+    - stage: linting
+      script: black --check .
+    - stage: testing
+      script: |
+        python setup.py bdist_wheel &&
+        pip install ./dist/traceflow*any.whl &&
+        sudo -E $(which traceflow) 1.1.1.1
