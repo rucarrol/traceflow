@@ -21,3 +21,7 @@ jobs:
         python setup.py bdist_wheel &&
         pip install ./dist/traceflow*any.whl &&
         sudo -E $(which traceflow) 1.1.1.1
+
+
+script: echo "hello world" 
+
