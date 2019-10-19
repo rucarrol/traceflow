@@ -1,0 +1,13 @@
+[paths]
+source = traceflow
+
+[run]
+branch = True
+source = traceflow
+parallel = true
+
+[report]
+show_missing = true
+precision = 2
+omit = *migrations*
+
