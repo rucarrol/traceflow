@@ -33,7 +33,6 @@ python3 setup.py bdist_wheel
 pip install ./dist/traceflow*any.whl
 ```
 
-
 ## Usage
 
 Usage should be designed to be as straight forward as possible. There are currently 3 output formats supported - Vertical Output (`--format=vert`), Horizontal output(`--format=horiz`) and experimental Vis.js/Browser based output(`--format=viz`). 
@@ -58,6 +57,20 @@ An example of vis.js outputs is as follows:
 
 More detailed help available in  `--help`.
 
+## Docker
+
+`traceflow` can also be ran as a Docker container:
+```
+$ docker build -t traceflow .
+$ docker run -i -t traceflow www.telia.se
+```
+
+To host the vis.js output through Docker:
+```
+$ docker run -p 127.0.0.1:8081:8081 -i -t traceflow --format=viz --bind=0.0.0.0 www.telia.se
+```
+
+Note that it is required to bind the web server to the address of a public interface (inside the container) to be able to reach the web page.
 
 ## Why 
 
