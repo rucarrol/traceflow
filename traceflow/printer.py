@@ -21,7 +21,7 @@ class printer:
         # Print Body
         for path_id in sorted(traces.keys()):
             print(row_format % f"Path ID {path_id} ", end="")
-            for hop in traces[path_id]:
+            for hop in sorted(traces[path_id]):
                 print(row_format % traces[path_id][hop], end="")
             print("")
         return None

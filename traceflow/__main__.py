@@ -30,12 +30,20 @@ def ints_to_ipid(path: int, ttl: int) -> int:
     return int.from_bytes(s, byteorder="big")
 
 
-def remove_duplicates(traces, daddr):
+def remove_duplicates(traces: dict(), daddr: str()) -> dict():
+    """
+    remove_duplicates takes traces (dict containing traces) and daddr(str destination address) and removes any duplicate
+    entries at the end of the trace.
+
+    :param traces: a dict of paths and traces
+    :param daddr: A string, destination IP address
+    :return: dict: cleaned up traces dict
+    """
     for path in traces.keys():
         # Remove any duplicate answers from daddr
         dup_keys = [i for i in traces[path] if traces[path][i] == daddr]
         while len(dup_keys) > 1:
-            print("dup keys: %s" % dup_keys)
+            logging.debug("dup keys: %s" % dup_keys)
             traces[path].pop(max(dup_keys))
             dup_keys = [i for i in traces[path] if traces[path][i] == daddr]
     return traces
@@ -158,6 +166,8 @@ def main():
     rx_icmp = listener.get_all_packets()
     traces = dict()
 
+    # For each packet the listener got, loop across the ICMP message and see what the TTL/Path combo is.
+    # Then add them to the dict traces as: traces[path][ttl]
     for i in rx_icmp:
         icmp_packet = traceflow.packet_decode.decode_icmp(rx_icmp[i]["payload"])
         ipv4_packet = traceflow.packet_decode.decode_ipv4_header(icmp_packet["payload"])

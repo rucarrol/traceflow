@@ -71,7 +71,7 @@ class socket_listener:
         # We're only interested in ICMP, so happy to have this hard coded.
         try:
             self.icmp_listener = socket.socket(
-                    socket.AF_INET, socket.SOCK_RAW, socket.getprotobyname("icmp")
+                socket.AF_INET, socket.SOCK_RAW, socket.getprotobyname("icmp")
             )
         except PermissionError as e:
             print(e)
