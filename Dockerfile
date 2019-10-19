@@ -4,12 +4,7 @@ RUN mkdir -p /traceflow/vars
 
 WORKDIR /traceflow/
 
-ADD README.md .
-ADD setup.py .
-ADD requirements.txt .
-ADD traceflow /traceflow/traceflow
-ADD vars /traceflow/vars
-ADD docker/entrypoint.sh .
+ADD . /traceflow/
 
 RUN pip install -r requirements.txt
 
@@ -18,4 +13,4 @@ RUN pip install dist/traceflow*any.whl
 
 EXPOSE 8081/tcp
 
-ENTRYPOINT ["sh", "entrypoint.sh"]
+ENTRYPOINT ["sh", "docker/entrypoint.sh"]
