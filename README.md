@@ -59,18 +59,30 @@ More detailed help available in  `--help`.
 
 ## Docker
 
-`traceflow` can also be ran as a Docker container:
+`traceflow` can also be ran as a Docker container.
+
+The latest version of traceflow is also on Docker Hub (https://hub.docker.com/r/awlnx/traceflow).
+
 ```
-$ docker build -t traceflow .
-$ docker run -i -t traceflow www.telia.se
+$ docker run -i -t awlnx/traceflow www.telia.se
 ```
 
 To host the vis.js output through Docker:
+
 ```
-$ docker run -p 127.0.0.1:8081:8081 -i -t traceflow --format=viz --bind=0.0.0.0 www.telia.se
+$ docker run -p 127.0.0.1:8081:8081 -i -t awlnx/traceflow --format=viz --bind=0.0.0.0 www.telia.se
 ```
 
 Note that it is required to bind the web server to the address of a public interface (inside the container) to be able to reach the web page.
+
+To build it on your local machine do the following:
+
+```
+$ docker build -t traceflow .
+```
+
+
+
 
 ## Why 
 
