@@ -21,6 +21,6 @@ setuptools.setup(
         "License :: OSI Approved :: BSD License",
         "Operating System :: OS Independent",
     ],
-    package_data={"": ["vars/*.html"]},
+    package_data={"": ["var/*.html"]},
     entry_points={"console_scripts": ["traceflow=traceflow.__main__:main"]},
 )
