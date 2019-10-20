@@ -58,34 +58,30 @@ class printer:
 
         port = 8081
         NODES = printer.__build_nodes(traces)
-      
+
         class nodesHandler(http.server.BaseHTTPRequestHandler):
-            nodes = None
             def __init__(self, *args, **kwargs):
-                super().__init__(*args, nodes=NODES, **kwargs)
-            def store_nodes(self, nodes):
-                self.nodes = nodes
+                super().__init__(*args, **kwargs)
+
             def do_GET(self):
-                if self.path in ['/']:
+                if self.path in ["/"]:
                     self.send_response(200)
-                    self.send_header('Content-type','text/html')
+                    self.send_header("Content-type", "text/html")
                     self.end_headers()
 
-                    self.wfile.write("data = '{0}'".format(self.nodes))
-                elif self.path in ['/nodes.json']:
-                    self.send_response(200)
-                    self.send_header('Content-type','application/json')
-                    self.end_headers()
-
-                    f = open("index.html") 
-                    self.wfile.write(f.read())
+                    f = open("index.html")
+                    self.wfile.write(bytes(f.read(), "utf-8"))
                     f.close()
+                elif self.path in ["/nodes.json"]:
+                    self.send_response(200)
+                    self.send_header("Content-type", "application/json")
+                    self.end_headers()
+
+                    self.wfile.write(bytes("data = '{0}'".format(NODES), "utf-8"))
                 else:
                     self.send_response(404)
+                    self.wfile.write(bytes("404: not found", "utf-8"))
 
-                # Send the html message
-                self.wfile.write("Hello World !")
-                return
         print(
             f"Starting temp. web server on http://{bind_ip}:{port}. Ctrl+C to finish/exit."
         )
