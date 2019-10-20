@@ -1,6 +1,6 @@
 FROM python:3.7-alpine
 
-RUN mkdir -p /traceflow/vars
+RUN mkdir -p /traceflow/var
 
 WORKDIR /traceflow/
 

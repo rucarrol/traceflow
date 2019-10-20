@@ -57,7 +57,7 @@ class printer:
         import http.server
 
         port = 8081
-        DIRECTORY = "vars/"
+        DIRECTORY = "var/"
 
         class Handler(http.server.SimpleHTTPRequestHandler):
             def __init__(self, *args, **kwargs):
