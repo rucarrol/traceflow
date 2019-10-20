@@ -49,7 +49,34 @@ def remove_duplicates(traces: dict(), daddr: str()) -> dict():
     return traces
 
 
-def help_text() -> str:
+def remove_duplicate_paths(traces: dict()) -> dict():
+    """
+    remove_duplicate_paths takes traces (dict containing traces) and removes any duplicate path.
+
+    :param traces: a dict of paths and traces
+    :return: dict: a deduplicated list of paths
+    """
+    dedup = dict()
+    seen = list()
+    for path in sorted(traces.keys()):
+        # Create a list (ordered) which we'll insert the hop at index of TTL-1
+        total_path = list()
+        for ttl in sorted(traces[path].keys()):
+            total_path.append(traces[path][ttl])
+        # If we have not seen this list before, insert it into seen, then
+        if total_path not in seen:
+            seen.append(total_path)
+            # we recreate the dict in dedup
+            for ttl, hop in enumerate(total_path):
+                # And add the trace with the first path we've seen it at
+                if path not in dedup.keys():
+                    dedup[path] = dict()
+                dedup[path].update({ttl + 1: hop})
+        logging.debug(f"Found unique path: {path}")
+    return dedup
+
+
+def help_text() -> str():
     message: str = """
     TraceFlow is a utility which attempts to enumerate the number of paths between this host and a given destination.
     Please use --help for more verbose help and options"""
@@ -93,6 +120,9 @@ def get_help() -> argparse:
         help="IP address to bind the vis.js web server to",
         default="127.0.0.1",
         type=str,
+    )
+    parser.add_argument(
+        "--dedup", help="De-duplicate the traceflow results", action="store_true"
     )
     parser.add_argument("--debug", help="Enable Debug Logging", action="store_true")
 
@@ -171,6 +201,10 @@ def main():
 
     # We should get all the packets the listener received here
     rx_icmp = listener.get_all_packets()
+    if len(rx_icmp) == 0:
+        logging.debug(f"rx_icmp is  {len(rx_icmp)}")
+        print(f"Did not receive any TTL expired ICMP packets. Exiting")
+        exit(1)
     traces = dict()
 
     # For each packet the listener got, loop across the ICMP message and see what the TTL/Path combo is.
@@ -205,6 +239,8 @@ def main():
                     logging.debug(f"Insert fake hop at {i} for path {path}")
                     traces[path][i] = "x"
 
+    if args.dedup:
+        traces = remove_duplicate_paths(traces)
     if args.format.lower() == "vert":
         # Print horizontal results
         traceflow.printer.print_vertical(traces)
