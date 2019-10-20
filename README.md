@@ -1,6 +1,6 @@
 # traceflow
 
-[![Build Status](https://travis-ci.org/rucarrol/traceflow.png)](https://travis-ci.org/rucarrol/traceflow)
+[![Build Status](https://travis-ci.org/rucarrol/traceflow.png)](https://travis-ci.org/rucarrol/traceflow)[![Coverage Status](https://coveralls.io/repos/github/rucarrol/traceflow/badge.svg)](https://coveralls.io/github/rucarrol/traceflow)
 
 
 ## Intro
