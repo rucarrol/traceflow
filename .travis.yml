@@ -10,11 +10,6 @@ install:
   - pip install -r requirements.txt
   - pip install -r requirements-build.txt
 
-#pre_script:
-#  - python setup.py bdist_wheel
-#  - pip install ./dist/traceflow*any.whl
-
-# command to run tests
 script:
   - python setup.py bdist_wheel
   - pip install ./dist/traceflow*any.whl
@@ -22,8 +17,6 @@ script:
   - black --check tests
   - pytest
   - sudo -E $(which traceflow) 1.1.1.1
-
-  #docker build -t traceflow .
 
 notifications:
   email: false
