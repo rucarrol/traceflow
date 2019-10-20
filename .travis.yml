@@ -24,7 +24,7 @@ script:
   - pip install ./dist/traceflow*any.whl
   - black --check traceflow
   - black --check tests
-  - pytest
+  - sudo -E $(which pytest)
   - sudo -E $(which traceflow) 1.1.1.1
 
 notifications:
