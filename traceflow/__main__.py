@@ -67,11 +67,11 @@ def remove_duplicate_paths(traces: dict()) -> dict():
         if total_path not in seen:
             seen.append(total_path)
             # we recreate the dict in dedup
-            for ttl,hop in enumerate(total_path):
+            for ttl, hop in enumerate(total_path):
                 # And add the trace with the first path we've seen it at
                 if path not in dedup.keys():
                     dedup[path] = dict()
-                dedup[path].update( { ttl+1 : hop } )
+                dedup[path].update({ttl + 1: hop})
         logging.debug(f"Found unique path: {path}")
     return dedup
 
@@ -121,7 +121,9 @@ def get_help() -> argparse:
         default="127.0.0.1",
         type=str,
     )
-    parser.add_argument("--dedup", help="De-duplicate the traceflow results", action="store_true")
+    parser.add_argument(
+        "--dedup", help="De-duplicate the traceflow results", action="store_true"
+    )
     parser.add_argument("--debug", help="Enable Debug Logging", action="store_true")
 
     # Positional Arguments
