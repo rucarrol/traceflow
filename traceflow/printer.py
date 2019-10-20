@@ -57,20 +57,40 @@ class printer:
         import http.server
 
         port = 8081
-        DIRECTORY = "var/"
-
-        class Handler(http.server.SimpleHTTPRequestHandler):
+        NODES = printer.__build_nodes(traces)
+      
+        class nodesHandler(http.server.BaseHTTPRequestHandler):
+            nodes = None
             def __init__(self, *args, **kwargs):
-                super().__init__(*args, directory=DIRECTORY, **kwargs)
+                super().__init__(*args, nodes=NODES, **kwargs)
+            def store_nodes(self, nodes):
+                self.nodes = nodes
+            def do_GET(self):
+                if self.path in ['/']:
+                    self.send_response(200)
+                    self.send_header('Content-type','text/html')
+                    self.end_headers()
 
-        nodes = printer.__build_nodes(traces)
-        f = open(DIRECTORY + "nodes.json", "w")
-        f.write("data = '{0}'".format(nodes))
-        f.close()
+                    self.wfile.write("data = '{0}'".format(self.nodes))
+                elif self.path in ['/nodes.json']:
+                    self.send_response(200)
+                    self.send_header('Content-type','application/json')
+                    self.end_headers()
+
+                    f = open("index.html") 
+                    self.wfile.write(f.read())
+                    f.close()
+                else:
+                    self.send_response(404)
+
+                # Send the html message
+                self.wfile.write("Hello World !")
+                return
         print(
             f"Starting temp. web server on http://{bind_ip}:{port}. Ctrl+C to finish/exit."
         )
-        httpd = http.server.HTTPServer((bind_ip, port), Handler)
+        httpd = http.server.HTTPServer((bind_ip, port), nodesHandler)
+        httpd.handle_request
         httpd.serve_forever()
         return None
 
