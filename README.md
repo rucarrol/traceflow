@@ -1,7 +1,11 @@
 # traceflow
 
-[![Build Status](https://travis-ci.org/rucarrol/traceflow.png)](https://travis-ci.org/rucarrol/traceflow)[![Coverage Status](https://coveralls.io/repos/github/rucarrol/traceflow/badge.svg)](https://coveralls.io/github/rucarrol/traceflow)
-
+[![PyPI version](https://img.shields.io/pypi/v/traceflow.svg)](https://pypi.org/project/traceflow/)
+[![PyPI downloads](https://img.shields.io/pypi/dm/traceflow.svg)](https://pypistats.org/packages/traceflow)
+[![Build Status](https://travis-ci.org/rucarrol/traceflow.svg)](https://travis-ci.org/rucarrol/traceflow)
+[![Coverage Status](https://coveralls.io/repos/github/rucarrol/traceflow/badge.svg)](https://coveralls.io/github/rucarrol/traceflow)
+[![Code style: Black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![GitHub](https://img.shields.io/github/license/rucarrol/traceflow.svg)](LICENSE)
 
 ## Intro
 
