@@ -6,6 +6,15 @@ python:
   - "3.7"
   - "3.8"
 
+jobs:
+  include:
+    - stage: build docker image
+      python: "3.7"
+      script:
+        - docker build -t traceflow .
+        - docker images
+        - docker run -p 127.0.0.1:8081:8081 -i -t traceflow 1.1.1.1
+
 install:
   - pip install -r requirements.txt
   - pip install -r requirements-build.txt
