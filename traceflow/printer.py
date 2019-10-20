@@ -57,7 +57,7 @@ class printer:
         import http.server
 
         port = 8081
-        NODES = printer.__build_nodes(traces)
+        NODES = printer._build_nodes(traces)
 
         class nodesHandler(http.server.BaseHTTPRequestHandler):
             def __init__(self, *args, **kwargs):
@@ -91,7 +91,7 @@ class printer:
         return None
 
     @staticmethod
-    def __build_nodes(traces: dict) -> dict:
+    def _build_nodes(traces: dict) -> dict:
         max_ttl = max([max(traces[i].keys()) for i in traces.keys()])
         nodes = dict()
         nodes["nodes"] = list()
