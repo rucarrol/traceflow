@@ -96,7 +96,7 @@ class packet_encode:
     def encode_ipv4_udp_packet(self: object) -> bytes:
         """
         encode_ipv4_udp_packet encodes a valid (IPv4) UDP packet. The IPv4 limitation is due to IPv4 requiring a pseudo header
-        where as IPv6 no longer requires src/dst IP address to be used as input to the checksum function.  
+        where as IPv6 no longer requires src/dst IP address to be used as input to the checksum function.
 
         :return: udp header, bytes + udp_data, the Payload
         :rtype: bytes
