@@ -6,16 +6,34 @@ import traceflow
 
 
 class packet_encode:
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        ip_ver,
+        ip_daddr,
+        udp_src_port,
+        udp_dst_port,
+        ttl,
+        l4_proto,
+        ip_id,
+        **kwargs,
+    ):
         self.__dict__.update(kwargs)
-        # TODO: Instead of passing all args in via kwargs, should actually explicitly set each attribute
-        logging.debug("Init for packet_encode")
-        if "ttl" not in kwargs.keys():
-            print("ttl MUST be set")
-            exit(1)
-        if "ip_daddr" not in kwargs.keys():
+        self.ip_ver = ip_ver
+        if ip_daddr is None:
             print("ip_daddr MUST be set")
             exit(1)
+        else:
+            self.ip_daddr = ip_daddr
+        self.udp_src_port = udp_src_port
+        self.udp_dst_port = udp_dst_port
+        logging.debug("Init for packet_encode")
+        if ttl is None:
+            print("ttl MUST be set")
+            exit(1)
+        else:
+            self.ttl = ttl
+        self.l4_proto = l4_proto
+        self.ip_id = ip_id
 
         if self.ip_ver == 4:
             # Do inet4 packet handling here
@@ -41,7 +59,7 @@ class packet_encode:
             )
             # If ip_id is not set, lets generate a random value here. 16 bit field means 65536
             self.ip_id = (
-                kwargs.get("ip_id") if kwargs.get("ip_id") else random.randint(0, 65535)
+                self.ip_id if self.ip_id is not None else random.randint(0, 65535)
             )
             ## TODO: Min header length is 20 bits, which is 5 * 8 (And an int is 8 bits wide). Should actually re-write this dynamically to set correct header size
             self.ip_ihl = 5

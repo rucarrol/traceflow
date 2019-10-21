@@ -174,22 +174,30 @@ def main():
             # Here we will combine the path we're after with the TTL, and use this to track the returning ICMP payload
             ip_id = ints_to_ipid(path, ttl)
             # TODO: Hide this behind a class
-            packet = {
-                "ip_ver": 4,
-                "ip_daddr": daddr,
-                "udp_src_port": port,
-                "udp_dst_port": DST_PORT,
-                "ttl": ttl,
-                "l4_proto": 17,
-                "ip_id": ip_id,
-            }
+            ip_ver = 4
+            ip_daddr = daddr
+            udp_src_port = port
+            udp_dst_port = DST_PORT
+            ttl = ttl
+            l4_proto = 17
+            ip_id = ip_id
+            additional_params = {"ip_tos": None, "ip_frag_off": None}
             # Create our packet here.
-            i = traceflow.packet_encode(**packet)
+            i = traceflow.packet_encode(
+                ip_ver,
+                ip_daddr,
+                udp_src_port,
+                udp_dst_port,
+                ttl,
+                l4_proto,
+                ip_id,
+                **additional_params,
+            )
             # TODO: Maybe refactor to hide these behind a single function, to be v4/v6 agnostic
             # Combine the IPv4 and UDP headers here
             probe = i.encode_ipv4_header() + i.encode_ipv4_udp_packet()
 
-            s = traceflow.socket_handler(packet["ip_daddr"])
+            s = traceflow.socket_handler(ip_daddr)
             _ = s.send_ipv4(probe)
             time.sleep(args.wait)
             # Since we are not running a sequential trace, we should check in to see if we've gotten a reply from the destination yet
