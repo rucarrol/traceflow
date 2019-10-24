@@ -30,7 +30,7 @@ def ints_to_ipid(path: int, ttl: int) -> int:
     return int.from_bytes(s, byteorder="big")
 
 
-def remove_duplicates(traces: dict(), daddr: str()) -> dict():
+def remove_duplicates(traces: dict, daddr: str) -> dict:
     """
     remove_duplicates takes traces (dict containing traces) and daddr(str destination address) and removes any duplicate
     entries at the end of the trace.
@@ -49,7 +49,7 @@ def remove_duplicates(traces: dict(), daddr: str()) -> dict():
     return traces
 
 
-def remove_duplicate_paths(traces: dict()) -> dict():
+def remove_duplicate_paths(traces: dict) -> dict:
     """
     remove_duplicate_paths takes traces (dict containing traces) and removes any duplicate path.
 
@@ -76,7 +76,7 @@ def remove_duplicate_paths(traces: dict()) -> dict():
     return dedup
 
 
-def help_text() -> str():
+def help_text() -> str:
     message: str = """
     TraceFlow is a utility which attempts to enumerate the number of paths between this host and a given destination.
     Please use --help for more verbose help and options"""
@@ -158,7 +158,9 @@ def main():
     if args.debug:
         logger = logging.getLogger()
         logger.setLevel(logging.DEBUG)
-
+    if TOT_RUNS > 255:
+        print(f"Max paths we can probe is 255. Setting --paths to 255 and continuing")
+        TOT_RUNS = 255
     # Setup the background thread listener here. Note that we need to pass daddr so we can snag the dst port unreachable
     # ICMP message.
     listener = traceflow.socket_listener(daddr)

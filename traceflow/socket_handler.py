@@ -78,8 +78,11 @@ class socket_listener:
             print("Please run as root!")
             exit(1)
         # TODO: Test Timestamps correctly
-        SO_TIMESTAMPNS = 35
-        self.icmp_listener.setsockopt(socket.SOL_SOCKET, SO_TIMESTAMPNS, 1)
+        try:
+            SO_TIMESTAMPNS = 35
+            self.icmp_listener.setsockopt(socket.SOL_SOCKET, SO_TIMESTAMPNS, 1)
+        except OSError as e:
+            logging.debug("Timestamps not available, continuing without them for now")
         self.ip_daddr = ip_daddr
         self.mutex = threading.Lock()
         logging.debug("Starting")
