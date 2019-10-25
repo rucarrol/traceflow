@@ -4,7 +4,7 @@ import traceflow
 import time
 import logging
 import socket
-import traceflow.helpers
+import traceflow.helpers as helpers
 
 
 def main():
