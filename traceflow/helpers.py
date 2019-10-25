@@ -4,6 +4,7 @@
 
 import argparse
 import struct
+import logging
 
 
 def help_text() -> str:
