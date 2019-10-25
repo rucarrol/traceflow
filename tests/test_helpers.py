@@ -20,9 +20,10 @@ class Test__main__(unittest.TestCase):
         helptext = helpers.help_text()
         self.assertIsInstance(helptext, str)
 
-    def test_get_help(self):
-        args = helpers.get_help()
-        self.assertIsInstance(args, argparse.Namespace)
+    # TODO: Should I unittest argparse?
+    # def test_get_help(self):
+    #    args = helpers.get_help()
+    #    self.assertIsInstance(args, argparse.Namespace)
 
     def test_remove_duplicates(self):
         duplicate_paths = {1: {1: "1.1.1.1", 2: "1.1.1.1"}}
