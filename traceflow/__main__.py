@@ -71,7 +71,7 @@ def main():
             )
             # TODO: Maybe refactor to hide these behind a single function, to be v4/v6 agnostic
             # Combine the IPv4 and UDP headers here
-            probe = i.encode_ipv4_header() + i.encode_ipv4_udp_packet()
+            probe = i.ipv4_packet + i.udp_packet
 
             s = traceflow.socket_handler(ip_daddr)
             _ = s.send_ipv4(probe)
