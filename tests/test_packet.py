@@ -122,17 +122,17 @@ class TestPacketEncode(unittest.TestCase):
         udp_src_port = self.test_encode_class_instance.udp_packet[0:2]
         self.assertEqual(udp_src_port, struct.pack("!H", 35000))
 
-    # UDP Packet Length: 18, computed.
-    def test_encode_udp_len(self):
-        # Len is 3rd word
-        udp_len = self.test_encode_class_instance.udp_packet[4:6]
-        self.assertEqual(udp_len, struct.pack("!H", 18))
-
     # udp_dst_port = 53
     def test_encode_udp_dst(self):
         # dst is 2nd word
         udp_dst_port = self.test_encode_class_instance.udp_packet[2:4]
         self.assertEqual(udp_dst_port, struct.pack("!H", 53))
+
+    # UDP Packet Length: 18, computed.
+    def test_encode_udp_len(self):
+        # Len is 3rd word
+        udp_len = self.test_encode_class_instance.udp_packet[4:6]
+        self.assertEqual(udp_len, struct.pack("!H", 18))
 
 
 if __name__ == "__main__":
