@@ -195,9 +195,18 @@ class packet_decode:
         # Decode the first 20 bytes, rest will most likely be payload (We'll re-base with ip_ihl later on)
         logging.debug("Decoding IPv4 Header")
         ip_header = header[0:20]
-        ip_ihl_ver, ip_tos, ip_tot_len, ip_id, ip_frag_off, ttl, l4_proto, ip_check, ip_saddr, ip_daddr = struct.unpack(
-            "!BBHHHBBH4s4s", ip_header
-        )
+        (
+            ip_ihl_ver,
+            ip_tos,
+            ip_tot_len,
+            ip_id,
+            ip_frag_off,
+            ttl,
+            l4_proto,
+            ip_check,
+            ip_saddr,
+            ip_daddr,
+        ) = struct.unpack("!BBHHHBBH4s4s", ip_header)
         # since we cannot read nibbles easy, we need to take the first byte and take the high/low nibble out
         ip_ver = ip_ihl_ver >> 4
         ip_ihl = ip_ihl_ver & 0x0F  # 0x0F == 15
