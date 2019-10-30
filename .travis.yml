@@ -22,7 +22,7 @@ install:
 script:
   - python setup.py bdist_wheel
   - pip install ./dist/traceflow*any.whl
-  - black --check traceflow
+  - black --diff --verbose traceflow
   - black --check tests
   - sudo -E $(which pytest)
   - sudo -E $(which traceflow) 1.1.1.1
