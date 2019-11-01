@@ -84,61 +84,54 @@ class TestPacketEncode(unittest.TestCase):
 
     # IPv4 Tests here
     def test_decode_ipv4(self):
-        ipv4_hdr = self.test_encode_class_instance.encode_ipv4_header()
+        ipv4_hdr = self.test_encode_class_instance.ipv4_packet
         self.assertIsInstance(ipv4_hdr, bytes)
 
     # ttl = 3
     def test_encode_ipv4_ttl(self):
         # TTL is 9th byte
-        ttl = self.test_encode_class_instance.encode_ipv4_header()[8]
+        ttl = self.test_encode_class_instance.ipv4_packet[8]
         self.assertEqual(ttl, 3)
 
     # l4_proto = 17
     def test_encode_ipv4_l4_proto(self):
         # Proto is 9th byte
-        l4_proto = self.test_encode_class_instance.encode_ipv4_header()[9]
+        l4_proto = self.test_encode_class_instance.ipv4_packet[9]
         self.assertEqual(l4_proto, 17)
 
-    # Checksum is 9059 - pre-computed.
-    # def test_encode_ipv4_l4_proto_fixed_checksum(self):
-    # Checksum is 10th and 11th bytes
-    # l4_proto = self.test_encode_class_instance.encode_ipv4_header()[10:12]
-    # self.assertEqual(l4_proto, struct.pack("H", 9059))
-
-    # ip_saddr = traceflow.socket_handler.get_egress_ip(ip_daddr)
-    # This was pre-computed to 192.168.0.31 for this packet.
-    # def test_encode_ipv4_l4_proto_local_ip(self):
-    #     # Checksum is 10th and 11th bytes
-    #     ip_saddr = self.test_encode_class_instance.encode_ipv4_header()[12:16]
-    #     self.assertEqual(ip_saddr, socket.inet_aton("192.168.0.31"))
+    # This will always fail as the checksum is dynamic. Instead we're going to test for a 0 return
+    def test_encode_ipv4_l4_proto_fixed_checksum(self):
+        # Checksum is 10th and 11th bytes
+        l4_proto = self.test_encode_class_instance.ipv4_packet[10:12]
+        self.assertIsNot(l4_proto, 0)
 
     # ip_daddr = "1.1.1.1"
     def test_encode_ipv4_l4_proto_public_ip(self):
         # Checksum is 10th and 11th bytes
-        ip_saddr = self.test_encode_class_instance.encode_ipv4_header()[16:20]
+        ip_saddr = self.test_encode_class_instance.ipv4_packet[16:20]
         self.assertEqual(ip_saddr, socket.inet_aton("1.1.1.1"))
 
     # UDP Tests here
     def test_decode_udp(self):
-        udp_hdr = self.test_encode_class_instance.encode_ipv4_udp_packet()
+        udp_hdr = self.test_encode_class_instance.udp_packet
         self.assertIsInstance(udp_hdr, bytes)
 
     # udp_src_port = 35000
     def test_encode_udp_src(self):
         # src is 1st word
-        udp_src_port = self.test_encode_class_instance.encode_ipv4_udp_packet()[0:2]
+        udp_src_port = self.test_encode_class_instance.udp_packet[0:2]
         self.assertEqual(udp_src_port, struct.pack("!H", 35000))
 
     # udp_dst_port = 53
     def test_encode_udp_dst(self):
         # dst is 2nd word
-        udp_dst_port = self.test_encode_class_instance.encode_ipv4_udp_packet()[2:4]
+        udp_dst_port = self.test_encode_class_instance.udp_packet[2:4]
         self.assertEqual(udp_dst_port, struct.pack("!H", 53))
 
     # UDP Packet Length: 18, computed.
     def test_encode_udp_len(self):
         # Len is 3rd word
-        udp_len = self.test_encode_class_instance.encode_ipv4_udp_packet()[4:6]
+        udp_len = self.test_encode_class_instance.udp_packet[4:6]
         self.assertEqual(udp_len, struct.pack("!H", 18))
 
 

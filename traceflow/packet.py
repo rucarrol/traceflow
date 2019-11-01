@@ -3,6 +3,7 @@ import struct
 import logging
 import random
 import traceflow
+import time
 
 
 class packet_encode:
@@ -37,13 +38,13 @@ class packet_encode:
 
         if self.ip_ver == 4:
             # Do inet4 packet handling here
-            ## Values which the kernel will set are here
-            # TODO: BSD wont auto-set total length for us. We need a better way of doing this.
-            # Short term work around, set to min. ip header length (20) and min. UDP header length (8) + payload (10)
-            self.ip_tot_len = 38  # Kernel will set this value on linux if 0.
-            self.ip_check = 0  # Kernel should set this value
+            # Values which we need to re-write later on will be set to 0 here.
+            self.ip_tot_len = 0
+            self.ip_check = 0
+            self.ip_ihl = 0
 
             # Values we need to set now should be here
+            # Lets get the egress IP for this packet
             self.ip_saddr = socket.inet_aton(
                 socket.gethostbyname(
                     traceflow.socket_handler.get_egress_ip(self.ip_daddr)
@@ -61,26 +62,23 @@ class packet_encode:
             self.ip_id = (
                 self.ip_id if self.ip_id is not None else random.randint(0, 65535)
             )
-            ## TODO: Min header length is 20 bits, which is 5 * 8 (And an int is 8 bits wide). Should actually re-write this dynamically to set correct header size
-            self.ip_ihl = 5
             logging.debug(
                 f"Sending with ID {self.ip_id}, TTL {self.ttl} to {self.ip_daddr}"
             )
+            # Assemble the packet with ip_tot_len set to 0, then we will re-calculate it.
+            self.ipv4_packet = self._encode_ipv4_header()
+            # IHL is in "number of 32 bit words", which means we need to get length in bytes, then divide by 4 (Then cast back to int as we cannot use floating points)
+            self.ip_ihl = int(len(self.ipv4_packet) / 4)
+            self.udp_packet = self._encode_ipv4_udp_packet()
+            self.ip_tot_len = len(self.ipv4_packet + self.udp_packet)
+            self.ipv4_packet = self._encode_ipv4_header()
+            # TODO, also build the TCP packet here.
 
         if self.ip_ver == 6:
             # TODO: All of the IPv6 things
             pass
-        if self.l4_proto == socket.getprotobyname("udp"):
-            # Do UDP Stuff here
-            pass
-        if self.l4_proto == socket.getprotobyname("tcp"):
-            # Do TCP stuff here
-            pass
 
-    def get_ipid(self) -> int:
-        return self.ip_id
-
-    def encode_ipv4_header(self) -> bytes:
+    def _encode_ipv4_header(self) -> bytes:
         """
         encode_ipv4_header uses all fields passed in __init__ to contruct a valid IPv4 Header
 
@@ -108,10 +106,9 @@ class packet_encode:
             self.ip_saddr,
             self.ip_daddr,
         )
-        self.ip_packet = ip_header
         return ip_header
 
-    def encode_ipv4_udp_packet(self: object) -> bytes:
+    def _encode_ipv4_udp_packet(self: object) -> bytes:
         """
         encode_ipv4_udp_packet encodes a valid (IPv4) UDP packet. The IPv4 limitation is due to IPv4 requiring a pseudo header
         where as IPv6 no longer requires src/dst IP address to be used as input to the checksum function.
@@ -121,11 +118,9 @@ class packet_encode:
         """
         # Since we cannot determine the ip.id of the packet we send via socket.SOCK_DGRAM, we need to use raw sockets
         # To build a packet manually. This is the only way that I can see where we will know the ip.id in advance
-        # Taken inspiration from  https://github.com/houluy/UDP/blob/master/udp.py
-        # Generate some data, encode to bytes array, snag the length. Ensure data is even length, otherwise we have to add padding byte
-        # TODO: Encode timestamp here for future analysis
         logging.debug("Encoding UDP Packet now")
-        self.data = "0123456789".encode()
+        # put the current timestamp into the UDP payload.
+        self.data = str(int(time.time())).encode()
         # UDP is a bit stupid, and takes a lower layer info as part of it's checksum. Specifically src/dst IP addr.
         # This is called the pseudo header
         pseudo_header = struct.pack(
@@ -200,9 +195,18 @@ class packet_decode:
         # Decode the first 20 bytes, rest will most likely be payload (We'll re-base with ip_ihl later on)
         logging.debug("Decoding IPv4 Header")
         ip_header = header[0:20]
-        ip_ihl_ver, ip_tos, ip_tot_len, ip_id, ip_frag_off, ttl, l4_proto, ip_check, ip_saddr, ip_daddr = struct.unpack(
-            "!BBHHHBBH4s4s", ip_header
-        )
+        (
+            ip_ihl_ver,
+            ip_tos,
+            ip_tot_len,
+            ip_id,
+            ip_frag_off,
+            ttl,
+            l4_proto,
+            ip_check,
+            ip_saddr,
+            ip_daddr,
+        ) = struct.unpack("!BBHHHBBH4s4s", ip_header)
         # since we cannot read nibbles easy, we need to take the first byte and take the high/low nibble out
         ip_ver = ip_ihl_ver >> 4
         ip_ihl = ip_ihl_ver & 0x0F  # 0x0F == 15
