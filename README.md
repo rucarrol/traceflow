@@ -12,15 +12,15 @@
 
 ## Intro
 
-`traceflow` is a utility written for educational purposes.
+`traceflow` is a python version of traceroute, with some notable changes. This utility written for educational purposes, mainly.
 
-`traceflow` which attempts to enumerate the number of paths between this host and a given destination. The mechanism for this is by not varying the destination source or destination port by TTL, thus keeping the inputs to any flow hashing calculations by routers along the path consistent for a single run. Then for each new run, vary the source port.
+`traceflow` which attempts to enumerate the number of paths between a source host and a given destination. The mechanism for this is by not varying the destination source or destination port by TTL, thus keeping the inputs to any flow hashing calculations by routers along the path consistent for a single run. Then for each new run, vary the source port. only.
 
 By using raw sockets, `traceflow` can set the `IP.ID` of egress IP packets to both the Path ID and TTL, thus enabling us to match up return packets to a path easily.
 
 The goal is to develop this utility to a point where it can be useful in production networks to detect the following:
 
-- Pre/post maintanace path changes
+- Pre/post maintenance path changes
 - as-path relax scenarios across IXPs/ISPs
 - IP Topology discovery and visualisation
 
@@ -112,28 +112,30 @@ This idea came to me in Stockholm, so I would like to call it Stockholm tracerou
 - Will identify and print unique paths in three different formats (Including browser based)
 - Detects uneven path lengths
 - Has a packet encoding and decoding library
+- Duplicate path detection
+- Support for vis.js(experimental)
 
 
 
 ## TODO
 
-- Duplicate path detection
 - IPv6 Support
-- MPLS Support (Sending and decoding)
+- MPLS Support (Sending,decoding and rfc4950)
 - TCP Support (Currently UDP only)
-- Support for vis.js
 - Understand raw sockets on OSX correctly to add support
 - Test on Windows
 - Add more resiliance to the code
 - Implement ICMP probes to detect hosts which dont generate Port Unreachable
-- Time stamps / latency
+- Time stamps / latency detection
+- rDNS support
+- ASN lookup support
 
 
 ## Bugs
 
-- Currently not very good at handling unequal length paths
 - Darwin/OSX not functional yet
-- Probably lots more
+- Windows has not been tested - at all
+
 
 ## Debugging
 
