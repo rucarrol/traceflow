@@ -88,6 +88,13 @@ To build it on your local machine do the following:
 $ docker build -t traceflow .
 ```
 
+### Tests:
+Here we use `make` as shortcut. 
+```
+$ make build-tests
+$ make run-tests
+```
+
 ## Why
 
 I wanted to learn more about raw sockets, traceroute and also wanted to try vary traceroute to be more flow/path aware, rather than hop aware.
