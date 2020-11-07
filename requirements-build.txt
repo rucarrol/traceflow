@@ -1,4 +1,4 @@
-black
+black==19.3b0 # pinning this since: https://github.com/psf/black/issues/1106
 pytest
 pytest-cov
 coveralls
