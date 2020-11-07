@@ -5,5 +5,5 @@ help:
 build-tests: ## builds docker container
 	docker build -f docker/tests/Dockerfile -t traceflow-tests .
 
-run-tests: ## runs tests through the docker container
+run-tests: build-tests ## runs tests through the docker container
 	docker run traceflow-tests
