@@ -6,54 +6,79 @@ import logging
 import socket
 import traceflow.helpers as helpers
 
+logger = logging.getLogger()
+
 
 def main():
     # ha ha ha
     args = helpers.get_help()
 
-    # CLI arguments set here.
-    try:
-        daddr = socket.gethostbyname(args.destination)
-    except socket.gaierror as e:
-        if "Name or service not known" in str(e):
-            print(f"Error, could not resolve {args.destination}, exiting")
-            exit(1)
-        else:
-            print(f"General error resolving {args.destination}")
-            print("exiting")
-            exit(1)
-    print(f"Resolved {args.destination} to {daddr}")
-    TOT_RUNS = args.paths
-    DST_PORT = args.dstport
-    SRC_PORT = args.srcport
-    MAX_TTL = args.ttl
-    BIND_IP = args.bind
+    daddr = resolve_address(args.destination)
+    tot_runs = args.paths
+    dst_port = args.dstport
+    src_port = args.srcport
+    max_ttl = args.ttl
+    bind_ip = args.bind
+    to_wait = args.wait
 
     if args.debug:
-        logger = logging.getLogger()
         logger.setLevel(logging.DEBUG)
-    if TOT_RUNS > 255:
-        print(f"Max paths we can probe is 255. Setting --paths to 255 and continuing")
-        TOT_RUNS = 255
-    # Setup the background thread listener here. Note that we need to pass daddr so we can snag the dst port unreachable
-    # ICMP message.
+    if tot_runs > 255:
+        logger.warning(f"Max paths we can probe is 255. Setting --paths to 255 and continuing")
+        tot_runs = 255
+
+    traces = compute_traces(daddr, tot_runs, dst_port, src_port, max_ttl, to_wait)
+
+    if args.dedup:
+        traces = helpers.remove_duplicate_paths(traces)
+    if args.format.lower() == "vert":
+        # Print horizontal results
+        traceflow.printer.print_vertical(traces)
+    if args.format.lower() == "horiz":
+        # print vertical results
+        traceflow.printer.print_horizontal(traces)
+    if args.format.lower() == "viz":
+        # Experimental vis.js / browser based visualisation
+        traceflow.printer.start_viz(traces, bind_ip)
+    exit(0)
+
+
+def resolve_address(dest):
+    try:
+        daddr = socket.gethostbyname(dest)
+    except socket.gaierror as e:
+        if "Name or service not known" in str(e):
+            err_msg = f"Error, could not resolve {dest}, exiting\n"
+        else:
+            err_msg = f"General error resolving {dest}\nexiting\n"
+        logger.error(err_msg)
+        exit(1)
+    logger.info(f"Resolved {dest} to {daddr}")
+    return daddr
+
+
+def compute_traces(daddr, tot_runs=4, dst_port=33452, src_port=33452, max_ttl=64, to_wait=0.1):
+    # Setup the background thread listener here.
+    # Note that we need to pass daddr
+    # so we can snag the dst port unreachable ICMP message.
     listener = traceflow.socket_listener(daddr)
 
     run_ids = dict()
 
     # Keep track of which path we're looking to enumerate
-    for path in range(1, TOT_RUNS + 1):
-        port = SRC_PORT + path
+    for path in range(1, tot_runs + 1):
+        port = src_port + path
         run_ids[path] = port
-        print(f"Looking at Path ID {path} (src port:{port} , dst port:{DST_PORT})")
-        for ttl in list(range(1, MAX_TTL)):
-            # Here we will combine the path we're after with the TTL, and use this to track the returning ICMP payload
+        print(f"Looking at Path ID {path} (src port:{port} , dst port:{dst_port})")
+        for ttl in list(range(1, max_ttl)):
+            # Here we will combine the path we're after with the TTL,
+            # and use this to track the returning ICMP payload
             ip_id = helpers.ints_to_ipid(path, ttl)
             # TODO: Hide this behind a class
             ip_ver = 4
             ip_daddr = daddr
             udp_src_port = port
-            udp_dst_port = DST_PORT
+            udp_dst_port = dst_port
             ttl = ttl
             l4_proto = 17
             ip_id = ip_id
@@ -75,8 +100,9 @@ def main():
 
             s = traceflow.socket_handler(ip_daddr)
             _ = s.send_ipv4(probe)
-            time.sleep(args.wait)
-            # Since we are not running a sequential trace, we should check in to see if we've gotten a reply from the destination yet
+            time.sleep(to_wait)
+            # Since we are not running a sequential trace,
+            # we should check in to see if we've gotten a reply from the destination yet
             packets = listener.get_packets_by_pathid(path)
             end = [i for i in packets if i["ip_saddr"] == daddr]
             if len(end) > 0:
@@ -91,7 +117,8 @@ def main():
         exit(1)
     traces = dict()
 
-    # For each packet the listener got, loop across the ICMP message and see what the TTL/Path combo is.
+    # For each packet the listener got, loop across the ICMP message
+    # and see what the TTL/Path combo is.
     # Then add them to the dict traces as: traces[path][ttl]
     for i in rx_icmp:
         icmp_packet = traceflow.packet_decode.decode_icmp(rx_icmp[i]["payload"])
@@ -123,18 +150,7 @@ def main():
                     logging.debug(f"Insert fake hop at {i} for path {path}")
                     traces[path][i] = "x"
 
-    if args.dedup:
-        traces = helpers.remove_duplicate_paths(traces)
-    if args.format.lower() == "vert":
-        # Print horizontal results
-        traceflow.printer.print_vertical(traces)
-    if args.format.lower() == "horiz":
-        # print vertical results
-        traceflow.printer.print_horizontal(traces)
-    if args.format.lower() == "viz":
-        # Experimental vis.js / browser based visualisation
-        traceflow.printer.start_viz(traces, BIND_IP)
-    exit(0)
+    return traces
 
 
 if __name__ == "__main__":
